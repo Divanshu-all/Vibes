@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import BodyFatCalculator from "./BodyFatCalculator";
 
 const IMAGES = {
   hero:
@@ -24,10 +25,34 @@ const VIBES_INSTAGRAM =
 const AMIT_INSTAGRAM =
   "https://www.instagram.com/amitchauhan7788/";
 
+// Gym location (latitude, longitude)
+const GYM_LAT = 31.532571;
+const GYM_LNG = 76.888143;
+const MAP_LINK = `https://www.google.com/maps/search/?api=1&query=${GYM_LAT},${GYM_LNG}`;
+
 // Optional: add your numbers to show Call / WhatsApp buttons automatically.
 // Example: const PHONE = "+919876543210";
-const PHONE = "";
-const WHATSAPP = "";
+const PHONE = "+918580909278";
+const WHATSAPP = "918580909278";
+const DISPLAY_NUMBER = "+91 85809 09278";
+
+const SESSION_GOALS = [
+  "Weight loss",
+  "Muscle gain",
+  "Strength training",
+  "General fitness",
+  "Not sure yet",
+];
+
+const EMPTY_SESSION_FORM = {
+  name: "",
+  contact: "",
+  email: "",
+  goal: "",
+  date: "",
+  time: "",
+  message: "",
+};
 
 const MARQUEE = [
   "PERSONAL TRAINING",
@@ -146,6 +171,8 @@ function App() {
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showTop, setShowTop] = useState(false);
+  const [sessionOpen, setSessionOpen] = useState(false);
+  const [sessionForm, setSessionForm] = useState(EMPTY_SESSION_FORM);
 
   // Scroll state: navbar style, progress bar, back-to-top button
   useEffect(() => {
@@ -167,12 +194,15 @@ function App() {
     };
   }, []);
 
-  // Lock page scroll while the mobile menu is open + close on Escape
+  // Lock page scroll while the mobile menu or booking drawer is open + close on Escape
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    document.body.style.overflow = menuOpen || sessionOpen ? "hidden" : "";
 
     const onKey = (e) => {
-      if (e.key === "Escape") setMenuOpen(false);
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        setSessionOpen(false);
+      }
     };
 
     window.addEventListener("keydown", onKey);
@@ -181,7 +211,7 @@ function App() {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", onKey);
     };
-  }, [menuOpen]);
+  }, [menuOpen, sessionOpen]);
 
   // Reveal-on-scroll animation
   useEffect(() => {
@@ -214,6 +244,44 @@ function App() {
   const closeMenu = () => {
     setMenuOpen(false);
   };
+
+  // ---------- Book a personal session ----------
+  const openSession = (e) => {
+    if (e) e.preventDefault();
+    setMenuOpen(false);
+    setSessionOpen(true);
+  };
+
+  const closeSession = () => setSessionOpen(false);
+
+  const updateSessionField = (field) => (e) =>
+    setSessionForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  const sendSessionToWhatsApp = (e) => {
+    e.preventDefault();
+
+    const { name, contact, email, goal, date, time, message } = sessionForm;
+
+    const text = `New Personal Session Request
+Name: ${name}
+Contact: ${contact}
+Email: ${email || "-"}
+Goal: ${goal || "-"}
+Preferred Date: ${date || "-"}
+Preferred Time: ${time || "-"}
+Message: ${message || "-"}`;
+
+    window.open(
+      `https://wa.me/${WHATSAPP.replace(/\D/g, "")}?text=${encodeURIComponent(text)}`,
+      "_blank",
+      "noopener"
+    );
+
+    setSessionForm(EMPTY_SESSION_FORM);
+    setSessionOpen(false);
+  };
+
+  const todayISO = new Date().toISOString().split("T")[0];
 
   return (
     <div className="app">
@@ -262,12 +330,20 @@ function App() {
             Process
           </a>
 
+          <a href="#calculator" onClick={closeMenu}>
+            Calculator
+          </a>
+
           <a href="#faq" onClick={closeMenu}>
             FAQ
           </a>
 
           <a href="#contact" onClick={closeMenu}>
             Contact
+          </a>
+
+          <a href="#contact" onClick={openSession}>
+            Book a Session
           </a>
 
           <a
@@ -325,8 +401,8 @@ function App() {
               Explore Services <span>↗</span>
             </a>
 
-            <a href="#amit" className="btn btn-outline">
-              Meet Amit
+            <a href="#contact" className="btn btn-outline" onClick={openSession}>
+              Book a Personal Session
             </a>
           </div>
         </div>
@@ -502,7 +578,7 @@ function App() {
 
                   <p>{service.description}</p>
 
-                  <a href="#contact" className="service-link">
+                  <a href="#contact" className="service-link" onClick={openSession}>
                     GET STARTED <span>↗</span>
                   </a>
                 </div>
@@ -531,7 +607,7 @@ function App() {
               Keep improving.
             </p>
 
-            <a href="#contact" className="btn btn-primary">
+            <a href="#contact" className="btn btn-primary" onClick={openSession}>
               START TRAINING <span>↗</span>
             </a>
           </div>
@@ -564,13 +640,16 @@ function App() {
         </div>
       </section>
 
+      {/* ================= BODY FAT CALCULATOR ================= */}
+      <BodyFatCalculator onBook={openSession} />
+
       {/* ================= FAQ ================= */}
       <section id="faq" className="faq-section">
         <div className="section-container">
           <div className="faq-grid">
             <div>
               <div className="section-label">
-                <span>04</span>
+                <span>05</span>
                 FAQ
               </div>
 
@@ -635,10 +714,18 @@ function App() {
 
           <div className="contact-buttons">
             <a
+              href="#contact"
+              className="btn btn-primary"
+              onClick={openSession}
+            >
+              BOOK A PERSONAL SESSION <span>↗</span>
+            </a>
+
+            <a
               href={AMIT_INSTAGRAM}
               target="_blank"
               rel="noreferrer"
-              className="btn btn-primary"
+              className="btn btn-outline light-button"
             >
               MESSAGE AMIT <span>↗</span>
             </a>
@@ -671,6 +758,15 @@ function App() {
                 CALL NOW
               </a>
             )}
+
+            <a
+              href={MAP_LINK}
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-outline light-button"
+            >
+              FIND THE GYM <span>↗</span>
+            </a>
           </div>
         </div>
       </section>
@@ -709,6 +805,7 @@ function App() {
               <a href="#about">About</a>
               <a href="#services">Services</a>
               <a href="#amit">Coach</a>
+              <a href="#calculator">Calculator</a>
               <a href="#faq">FAQ</a>
             </div>
 
@@ -741,17 +838,27 @@ function App() {
 
           <a href="#top">BACK TO TOP ↑</a>
         </div>
+
+        <p className="footer-credit">
+          Developed by{" "}
+          <a
+            href="https://portfolio-tffl.onrender.com/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Divanshu
+          </a>
+        </p>
       </footer>
 
       {/* ================= MOBILE STICKY CTA ================= */}
       <div className={`mobile-cta ${scrolled ? "show" : ""}`}>
         <a
-          href={WHATSAPP ? `https://wa.me/${WHATSAPP.replace(/\D/g, "")}` : AMIT_INSTAGRAM}
-          target="_blank"
-          rel="noreferrer"
+          href="#contact"
           className="mobile-cta-main"
+          onClick={openSession}
         >
-          {WHATSAPP ? "WHATSAPP AMIT" : "MESSAGE AMIT"} <span>↗</span>
+          BOOK A SESSION <span>↗</span>
         </a>
 
         {PHONE ? (
@@ -772,6 +879,118 @@ function App() {
       >
         ↑
       </a>
+
+      {/* ================= BOOK A PERSONAL SESSION ================= */}
+      <div
+        className={`session-overlay ${sessionOpen ? "show" : ""}`}
+        onClick={closeSession}
+      />
+
+      <aside
+        className={`session-drawer ${sessionOpen ? "open" : ""}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Book a personal session"
+        aria-hidden={!sessionOpen}
+      >
+        <div className="session-drawer-head">
+          <h3>Book a personal session</h3>
+
+          <button
+            type="button"
+            className="session-close"
+            onClick={closeSession}
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+
+        <p className="session-note">
+          Fill this in and we'll continue on WhatsApp at{" "}
+          <a href={`tel:${PHONE}`}>{DISPLAY_NUMBER}</a>.
+        </p>
+
+        <form className="session-form" onSubmit={sendSessionToWhatsApp}>
+          <label>
+            Name
+            <input
+              type="text"
+              required
+              value={sessionForm.name}
+              onChange={updateSessionField("name")}
+            />
+          </label>
+
+          <label>
+            Contact number
+            <input
+              type="tel"
+              required
+              value={sessionForm.contact}
+              onChange={updateSessionField("contact")}
+            />
+          </label>
+
+          <label>
+            Email (optional)
+            <input
+              type="email"
+              value={sessionForm.email}
+              onChange={updateSessionField("email")}
+            />
+          </label>
+
+          <label>
+            Your goal
+            <select
+              value={sessionForm.goal}
+              onChange={updateSessionField("goal")}
+            >
+              <option value="">Select a goal</option>
+              {SESSION_GOALS.map((g) => (
+                <option key={g} value={g}>
+                  {g}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <div className="session-row">
+            <label>
+              Preferred date
+              <input
+                type="date"
+                min={todayISO}
+                value={sessionForm.date}
+                onChange={updateSessionField("date")}
+              />
+            </label>
+
+            <label>
+              Preferred time
+              <input
+                type="time"
+                value={sessionForm.time}
+                onChange={updateSessionField("time")}
+              />
+            </label>
+          </div>
+
+          <label>
+            Message
+            <textarea
+              rows="3"
+              value={sessionForm.message}
+              onChange={updateSessionField("message")}
+            />
+          </label>
+
+          <button type="submit" className="btn btn-primary">
+            Send request <span>→</span>
+          </button>
+        </form>
+      </aside>
     </div>
   );
 }
