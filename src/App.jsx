@@ -55,7 +55,9 @@ const EMPTY_SESSION_FORM = {
 };
 
 const MARQUEE = [
+  "GYM IN SUNDERNAGAR",
   "PERSONAL TRAINING",
+  "FITNESS COACH SUNDERNAGAR",
   "PT COACHING",
   "CUSTOM DIET PLANS",
   "SUPPLEMENT GUIDANCE",
@@ -90,7 +92,7 @@ const SERVICES = [
     title: "Personal Training",
     shortTitle: "PERSONAL TRAINING",
     description:
-      "Focused one-on-one training designed around your body, goals, fitness level and progress.",
+      "Focused one-on-one personal training in Sundernagar, designed around your body, goals, fitness level and progress.",
     image: IMAGES.personalTraining,
     tag: "1-ON-1",
   },
@@ -99,7 +101,7 @@ const SERVICES = [
     title: "PT Coaching",
     shortTitle: "PT COACHING",
     description:
-      "Structured personal coaching with proper exercise guidance, consistency and progressive training.",
+      "Structured gym coaching in Sundernagar with proper exercise guidance, consistency and progressive training.",
     image: IMAGES.pt,
     tag: "COACHING",
   },
@@ -144,6 +146,16 @@ const STATS = [
 
 const FAQS = [
   {
+    question: "Where is Vibes Fitness gym in Sundernagar?",
+    answer:
+      "Vibes Fitness is a gym and personal training studio in Sundernagar, Mandi district, Himachal Pradesh. Tap 'Find the Gym' to open the exact location on Google Maps.",
+  },
+  {
+    question: "Who is the coach at Vibes Fitness?",
+    answer:
+      "Amit Chauhan is the head fitness coach and personal trainer at Vibes Fitness, with 17+ years of experience in training, diet and supplement guidance.",
+  },
+  {
     question: "Do I need previous gym experience?",
     answer:
       "No. Training can be adjusted according to your current fitness level, experience and goals.",
@@ -173,6 +185,58 @@ function App() {
   const [showTop, setShowTop] = useState(false);
   const [sessionOpen, setSessionOpen] = useState(false);
   const [sessionForm, setSessionForm] = useState(EMPTY_SESSION_FORM);
+
+  // SEO: page title, description and local-business structured data
+  useEffect(() => {
+    document.title =
+      "Vibes Fitness | Best Gym in Sundernagar | Personal Trainer & Fitness Coach";
+
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "description");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute(
+      "content",
+      "Vibes Fitness is a gym in Sundernagar, Himachal Pradesh with personal training, PT coaching, custom diet plans and supplement guidance by coach Amit Chauhan (17+ years experience)."
+    );
+
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "HealthClub",
+      name: "Vibes Fitness",
+      description:
+        "Gym in Sundernagar offering personal training, PT coaching, diet plans and supplement guidance.",
+      telephone: PHONE,
+      image: "/logo.webp",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Sundernagar",
+        addressRegion: "Himachal Pradesh",
+        addressCountry: "IN",
+      },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: GYM_LAT,
+        longitude: GYM_LNG,
+      },
+      areaServed: "Sundernagar, Mandi, Himachal Pradesh",
+      sameAs: [VIBES_INSTAGRAM, AMIT_INSTAGRAM],
+      employee: {
+        "@type": "Person",
+        name: "Amit Chauhan",
+        jobTitle: "Fitness Coach & Personal Trainer",
+      },
+    });
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
 
   // Scroll state: navbar style, progress bar, back-to-top button
   useEffect(() => {
@@ -289,10 +353,10 @@ Message: ${message || "-"}`;
 
       {/* ================= NAVBAR ================= */}
       <nav className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
-        <a href="#top" className="logo" onClick={closeMenu} aria-label="Vibes Fitness home">
+        <a href="#top" className="logo" onClick={closeMenu} aria-label="Vibes Fitness gym in Sundernagar home">
           <img
             src="/logo.webp"
-            alt="Vibes Fitness logo"
+            alt="Vibes Fitness gym in Sundernagar logo"
             className="logo-img"
             width="52"
             height="52"
@@ -378,7 +442,7 @@ Message: ${message || "-"}`;
 
         <div className="hero-content">
           <p className="eyebrow">
-            VIBES FITNESS <span>/</span> PERSONAL TRAINING
+            VIBES FITNESS <span>/</span> GYM IN SUNDERNAGAR
           </p>
 
           <h1>
@@ -392,8 +456,9 @@ Message: ${message || "-"}`;
           </h1>
 
           <p className="hero-description">
-            Personal training, PT coaching, custom diet plans and
-            supplement guidance — built around you.
+            Gym in Sundernagar with personal training, PT coaching,
+            custom diet plans and supplement guidance — coached by
+            Amit Chauhan and built around you.
           </p>
 
           <div className="hero-actions">
@@ -415,7 +480,7 @@ Message: ${message || "-"}`;
 
           <div className="hero-location">
             <span className="status-dot"></span>
-            PERSONAL TRAINING
+            SUNDERNAGAR, HIMACHAL PRADESH
           </div>
         </div>
       </header>
@@ -439,7 +504,7 @@ Message: ${message || "-"}`;
           <div className="intro-grid">
             <div className="section-label">
               <span>01</span>
-              ABOUT VIBES
+              ABOUT VIBES FITNESS
             </div>
 
             <div className="intro-content reveal">
@@ -460,6 +525,12 @@ Message: ${message || "-"}`;
                 practical fitness support. Whether your goal is getting
                 stronger, improving your fitness or transforming your
                 routine, your training should be built around you.
+              </p>
+
+              <p>
+                We are a gym in Sundernagar, Himachal Pradesh, with an
+                experienced fitness coach and personal trainer for
+                weight loss, muscle gain and strength training.
               </p>
 
               <a href="#services" className="text-link">
@@ -485,14 +556,14 @@ Message: ${message || "-"}`;
       {/* ================= AMIT HERO ================= */}
       <section id="amit" className="amit-hero">
         <div className="amit-image">
-          <img src="/amit.webp" alt="Amit Chauhan" />
+          <img src="/amit.webp" alt="Amit Chauhan - fitness coach and personal trainer in Sundernagar" />
         </div>
 
         <div className="amit-overlay"></div>
 
         <div className="amit-content">
           <p className="eyebrow light">
-            MEET YOUR COACH <span>/</span> VIBES FITNESS
+            MEET YOUR COACH <span>/</span> FITNESS COACH IN SUNDERNAGAR
           </p>
 
           <h2>
@@ -516,8 +587,8 @@ Message: ${message || "-"}`;
           </div>
 
           <p className="amit-description">
-            With over 17 years of experience in fitness and training,
-            Amit Chauhan focuses on helping clients train with structure,
+            With over 17 years of experience as a gym coach and personal
+            trainer in Sundernagar, Amit Chauhan focuses on helping clients train with structure,
             consistency and purpose.
           </p>
 
@@ -554,8 +625,9 @@ Message: ${message || "-"}`;
               </h2>
 
               <p>
-                No unnecessary programs. Just focused fitness services
-                designed to support your training and lifestyle.
+                No unnecessary programs. Just focused gym and personal
+                training services in Sundernagar, designed to support
+                your training and lifestyle.
               </p>
             </div>
           </div>
@@ -775,10 +847,10 @@ Message: ${message || "-"}`;
       <footer className="footer">
         <div className="footer-top">
           <div className="footer-brand">
-            <a href="#top" className="logo logo-footer" aria-label="Vibes Fitness home">
+            <a href="#top" className="logo logo-footer" aria-label="Vibes Fitness gym in Sundernagar home">
               <img
                 src="/logo.webp"
-                alt="Vibes Fitness logo"
+                alt="Vibes Fitness gym in Sundernagar logo"
                 className="logo-img"
                 width="72"
                 height="72"
@@ -796,6 +868,8 @@ Message: ${message || "-"}`;
               <br />
               Better you.
             </p>
+
+            <p>Gym &amp; Fitness Coach in Sundernagar, Himachal Pradesh</p>
           </div>
 
           <div className="footer-links">
@@ -804,7 +878,7 @@ Message: ${message || "-"}`;
 
               <a href="#about">About</a>
               <a href="#services">Services</a>
-              <a href="#amit">Coach</a>
+              <a href="#amit">Fitness Coach</a>
               <a href="#calculator">Calculator</a>
               <a href="#faq">FAQ</a>
             </div>
@@ -834,7 +908,7 @@ Message: ${message || "-"}`;
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} VIBES FITNESS</span>
 
-          <span>TRAIN HARD. STAY CONSISTENT.</span>
+          <span>GYM IN SUNDERNAGAR · TRAIN HARD. STAY CONSISTENT.</span>
 
           <a href="#top">BACK TO TOP ↑</a>
         </div>
